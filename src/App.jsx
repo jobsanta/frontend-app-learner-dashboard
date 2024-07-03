@@ -1,35 +1,32 @@
-import React from 'react';
-import { Helmet } from 'react-helmet';
+import React from "react";
+import { Helmet } from "react-helmet";
 
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { logError } from '@edx/frontend-platform/logging';
-import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
+import { useIntl } from "@edx/frontend-platform/i18n";
+import { logError } from "@edx/frontend-platform/logging";
+import { initializeHotjar } from "@edx/frontend-enterprise-hotjar";
 
-import { ErrorPage, AppContext } from '@edx/frontend-platform/react';
-import FooterSlot from '@openedx/frontend-slot-footer';
-import { Alert } from '@openedx/paragon';
+import { ErrorPage, AppContext } from "@edx/frontend-platform/react";
+import FooterSlot from "@openedx/frontend-slot-footer";
+import { Alert } from "@openedx/paragon";
 
-import { RequestKeys } from 'data/constants/requests';
-import store from 'data/store';
-import {
-  selectors,
-  actions,
-} from 'data/redux';
-import { reduxHooks } from 'hooks';
-import Dashboard from 'containers/Dashboard';
-import ZendeskFab from 'components/ZendeskFab';
-import { ExperimentProvider } from 'ExperimentContext';
+import { RequestKeys } from "data/constants/requests";
+import store from "data/store";
+import { selectors, actions } from "data/redux";
+import { reduxHooks } from "hooks";
+import Dashboard from "containers/Dashboard";
+import ZendeskFab from "components/ZendeskFab";
+import { ExperimentProvider } from "ExperimentContext";
 
-import track from 'tracking';
+import track from "tracking";
 
-import fakeData from 'data/services/lms/fakeData/courses';
+import fakeData from "data/services/lms/fakeData/courses";
 
-import AppWrapper from 'containers/WidgetContainers/AppWrapper';
-import LearnerDashboardHeader from 'containers/LearnerDashboardHeader';
+import AppWrapper from "containers/WidgetContainers/AppWrapper";
+import LearnerDashboardHeader from "containers/LearnerDashboardHeader";
 
-import { getConfig } from '@edx/frontend-platform';
-import messages from './messages';
-import './App.scss';
+import { getConfig } from "@edx/frontend-platform";
+import messages from "./messages";
+import "./App.scss";
 
 export const App = () => {
   const { authenticatedUser } = React.useContext(AppContext);
@@ -45,10 +42,13 @@ export const App = () => {
   const optimizelyScript = () => {
     if (getConfig().OPTIMIZELY_URL) {
       return <script src={getConfig().OPTIMIZELY_URL} />;
-    } if (getConfig().OPTIMIZELY_PROJECT_ID) {
+    }
+    if (getConfig().OPTIMIZELY_PROJECT_ID) {
       return (
         <script
-          src={`${getConfig().MARKETING_SITE_BASE_URL}/optimizelyjs/${getConfig().OPTIMIZELY_PROJECT_ID}.js`}
+          src={`${getConfig().MARKETING_SITE_BASE_URL}/optimizelyjs/${
+            getConfig().OPTIMIZELY_PROJECT_ID
+          }.js`}
         />
       );
     }
@@ -56,17 +56,17 @@ export const App = () => {
   };
 
   React.useEffect(() => {
-    if (authenticatedUser?.administrator || getConfig().NODE_ENV === 'development') {
+    if (
+      authenticatedUser?.administrator ||
+      getConfig().NODE_ENV === "development"
+    ) {
       window.loadEmptyData = () => {
         loadData({ ...fakeData.globalData, courses: [] });
       };
       window.loadMockData = () => {
         loadData({
           ...fakeData.globalData,
-          courses: [
-            ...fakeData.courseRunData,
-            ...fakeData.entitlementData,
-          ],
+          courses: [...fakeData.courseRunData, ...fakeData.entitlementData],
         });
       };
       window.store = store;
@@ -90,23 +90,33 @@ export const App = () => {
     <>
       <Helmet>
         <title>{formatMessage(messages.pageTitle)}</title>
-        <link rel="shortcut icon" href={getConfig().FAVICON_URL} type="image/x-icon" />
+        <link
+          rel="shortcut icon"
+          href={getConfig().FAVICON_URL}
+          type="image/x-icon"
+        />
         {optimizelyScript()}
       </Helmet>
       <div>
         <AppWrapper>
           <LearnerDashboardHeader />
+          <div>
+            <h1>Big Banner</h1>
+          </div>
           <main>
-            {hasNetworkFailure
-              ? (
-                <Alert variant="danger">
-                  <ErrorPage message={formatMessage(messages.errorMessage, { supportEmail })} />
-                </Alert>
-              ) : (
-                <ExperimentProvider>
-                  <Dashboard />
-                </ExperimentProvider>
-              )}
+            {hasNetworkFailure ? (
+              <Alert variant="danger">
+                <ErrorPage
+                  message={formatMessage(messages.errorMessage, {
+                    supportEmail,
+                  })}
+                />
+              </Alert>
+            ) : (
+              <ExperimentProvider>
+                <Dashboard />
+              </ExperimentProvider>
+            )}
           </main>
         </AppWrapper>
         <FooterSlot />
